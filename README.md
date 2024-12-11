@@ -4,12 +4,16 @@
 
 ## Installation
 
-```ts
-import { QrCode } from '@marianmeres/svelte-qrcode';
+```sh
+npm i @marianmeres/svelte-qrcode
 ```
 
 ## Usage
 ```html
+<script>
+    import { QrCode } from '@marianmeres/svelte-qrcode';
+</script>
+
 <QrCode content="this will be qr encoded as svg string" />
 ```
 
