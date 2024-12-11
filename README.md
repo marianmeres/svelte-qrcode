@@ -2,8 +2,6 @@
 
 [QR-Code-generator](https://github.com/nayuki/QR-Code-generator) wrapped as Svelte component.
 
-See [playground](https://qrcode.meres.sk) for more parameters.
-
 ## Installation
 
 ```ts
