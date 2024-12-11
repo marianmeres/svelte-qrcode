@@ -5,7 +5,7 @@
 ## Installation
 
 ```ts
-import QrCode from '@marianmeres/svelte-qrcode';
+import { QrCode } from '@marianmeres/svelte-qrcode';
 ```
 
 ## Usage

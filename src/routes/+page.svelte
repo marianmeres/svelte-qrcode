@@ -50,7 +50,7 @@
 
 	<div class="usage">{`<!-- `}Example usage inside of a Svelte component.{` -->`}</div>
 	<pre>{`<script>
-  import QrCode from '@marianmeres/svelte-qrcode';
+  import { QrCode } from '@marianmeres/svelte-qrcode';
 <script/>
 
 <QrCode
