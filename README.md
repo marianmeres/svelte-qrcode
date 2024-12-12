@@ -1,6 +1,6 @@
 # @marianmeres/svelte-qrcode
 
-[QR-Code-generator](https://github.com/nayuki/QR-Code-generator) wrapped as Svelte component.
+[QR-Code-generator](https://github.com/nayuki/QR-Code-generator) wrapped as a Svelte component.
 
 ## Installation
 
