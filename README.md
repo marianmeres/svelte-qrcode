@@ -17,4 +17,4 @@ npm i @marianmeres/svelte-qrcode
 <QrCode content="this will be qr encoded as svg string" />
 ```
 
-See [playground](https://qrcode.meres.sk) for more parameters.
+See [playground](https://qr.meres.sk) for more parameters.
