@@ -1,0 +1,1 @@
+Svelte 5 component for rendering QR codes as inline SVG. Supports error correction level, border, and color customization via props.
