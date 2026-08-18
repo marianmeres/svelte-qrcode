@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { toQrSvg } from './qrcodegen.js';
+	import { toQrPath, type QrEcl } from './qrcodegen.js';
 
 	let {
 		content,
@@ -9,15 +9,20 @@
 		color = '#000000'
 	}: {
 		content: string;
-		ecl?: 'low' | 'medium' | 'quartile' | 'high';
+		ecl?: QrEcl;
 		border?: number;
 		bgColor?: string;
 		color?: string;
 	} = $props();
+
+	let qr = $derived(toQrPath(content, ecl, border));
 </script>
 
 <div>
-	{@html toQrSvg(content, ecl, border, bgColor, color)}
+	<svg viewBox="0 0 {qr.size} {qr.size}" stroke="none" style="display: block; margin: 0;">
+		<rect width="100%" height="100%" fill={bgColor} />
+		<path d={qr.path} fill={color} />
+	</svg>
 </div>
 
 <style>

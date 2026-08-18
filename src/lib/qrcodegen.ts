@@ -1,7 +1,7 @@
 /**
  * Copying from:
  * https://github.com/nayuki/QR-Code-generator/tree/master/typescript-javascript
- * adding one export down below
+ * adding exports down below
  */
 
 /*
@@ -986,38 +986,67 @@ namespace qrcodegen.QrSegment {
 
 // copying from examples, slightly adjusting
 
+export type QrEcl = 'low' | 'medium' | 'quartile' | 'high';
+
+// Using a Map (not a plain object) so that a runtime `ecl` of e.g. 'constructor'
+// cannot resolve to an inherited property.
+const ECL_MAP: Map<string, qrcodegen.QrCode.Ecc> = new Map([
+	['low', qrcodegen.QrCode.Ecc.LOW],
+	['medium', qrcodegen.QrCode.Ecc.MEDIUM],
+	['quartile', qrcodegen.QrCode.Ecc.QUARTILE],
+	['high', qrcodegen.QrCode.Ecc.HIGH]
+]);
+
+// Escapes a value for safe interpolation into a double quoted XML/HTML attribute.
+function escapeAttr(value: unknown): string {
+	return String(value)
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#39;');
+}
+
+// Returns the geometry of a QR Code depicting the given content, with the given number of
+// border modules: the side length of the (square) viewBox and the "d" attribute of a path
+// covering every dark module. Both are built from validated numbers only, so they are always
+// safe to interpolate into markup.
+export function toQrPath(
+	content: string,
+	ecl: QrEcl = 'medium',
+	border: number = 4
+): { size: number; path: string } {
+	const b: number = Number(border);
+	if (!Number.isFinite(b) || b < 0) throw new RangeError('Border must be a non-negative number');
+
+	const qr = qrcodegen.QrCode.encodeText(content, ECL_MAP.get(ecl) ?? qrcodegen.QrCode.Ecc.MEDIUM);
+
+	let parts: Array<string> = [];
+	for (let y = 0; y < qr.size; y++) {
+		for (let x = 0; x < qr.size; x++) {
+			if (qr.getModule(x, y)) parts.push(`M${x + b},${y + b}h1v1h-1z`);
+		}
+	}
+	return { size: qr.size + b * 2, path: parts.join(' ') };
+}
+
 // Returns a string of SVG code for an image depicting the given QR Code, with the given number
 // of border modules. The string always uses Unix newlines (\n), regardless of the platform.
 export function toQrSvg(
 	content: string,
-	ecl: 'low' | 'medium' | 'quartile' | 'high' = 'medium',
+	ecl: QrEcl = 'medium',
 	border: number = 4,
 	lightColor: string = 'white',
 	darkColor: string = 'black'
 ): string {
-	const eclMap: Record<string, qrcodegen.QrCode.Ecc> = {
-		low: qrcodegen.QrCode.Ecc.LOW,
-		medium: qrcodegen.QrCode.Ecc.MEDIUM,
-		quartile: qrcodegen.QrCode.Ecc.QUARTILE,
-		high: qrcodegen.QrCode.Ecc.HIGH
-	};
-	const ecc = eclMap[ecl] ?? qrcodegen.QrCode.Ecc.MEDIUM;
-	const qr = qrcodegen.QrCode.encodeText(content, ecc);
-
-	if (border < 0) throw new RangeError('Border must be non-negative');
-	let parts: Array<string> = [];
-	for (let y = 0; y < qr.size; y++) {
-		for (let x = 0; x < qr.size; x++) {
-			if (qr.getModule(x, y)) parts.push(`M${x + border},${y + border}h1v1h-1z`);
-		}
-	}
+	const { size, path } = toQrPath(content, ecl, border);
 	// <?xml version="1.0" encoding="UTF-8"?>
 	// <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 	// xmlns="http://www.w3.org/2000/svg" version="1.1"
 	return `
-<svg viewBox="0 0 ${qr.size + border * 2} ${qr.size + border * 2}" stroke="none" style="display: block; margin: 0;">
-	<rect width="100%" height="100%" fill="${lightColor}"/>
-	<path d="${parts.join(' ')}" fill="${darkColor}"/>
+<svg viewBox="0 0 ${size} ${size}" stroke="none" style="display: block; margin: 0;">
+	<rect width="100%" height="100%" fill="${escapeAttr(lightColor)}"/>
+	<path d="${path}" fill="${escapeAttr(darkColor)}"/>
 </svg>
 `;
 }
