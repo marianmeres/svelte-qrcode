@@ -12,8 +12,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check .",
 		"release": "deno run -A jsr:@marianmeres/release",
-		"rp": "npm run package && npm run release -- patch --no-push && npm publish --access public && git push --follow-tags",
-		"rpm": "npm run package && npm run release -- minor --no-push && npm publish --access public && git push --follow-tags"
+		"rp": "npm run release -- patch --no-push && npm publish --access public && git push --follow-tags",
+		"rpm": "npm run release -- minor --no-push && npm publish --access public && git push --follow-tags"
 	},
 	"files": [
 		"dist",
