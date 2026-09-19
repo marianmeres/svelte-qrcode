@@ -37,17 +37,16 @@
 	},
 	"license": "MIT",
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.3.1",
 		"@sveltejs/adapter-static": "^3.0.10",
-		"@sveltejs/kit": "^2.70.2",
+		"@sveltejs/kit": "^2.70.3",
 		"@sveltejs/package": "^2.5.8",
-		"@sveltejs/vite-plugin-svelte": "^5.1.1",
-		"prettier": "^3.9.6",
-		"prettier-plugin-svelte": "^3.5.2",
-		"publint": "^0.2.12",
-		"svelte": "^5.56.9",
+		"@sveltejs/vite-plugin-svelte": "^7.3.0",
+		"prettier": "^3.9.8",
+		"prettier-plugin-svelte": "^4.1.1",
+		"publint": "^0.3.24",
+		"svelte": "^5.57.0",
 		"svelte-check": "^4.7.6",
-		"typescript": "^5.9.3",
-		"vite": "^6.4.3"
+		"typescript": "^6.0.3",
+		"vite": "^8.3.0"
 	}
 }
