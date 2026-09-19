@@ -986,6 +986,7 @@ namespace qrcodegen.QrSegment {
 
 // copying from examples, slightly adjusting
 
+/** Error correction level: roughly 7%, 15%, 25% or 30% of the code may be damaged or obscured. */
 export type QrEcl = 'low' | 'medium' | 'quartile' | 'high';
 
 // Using a Map (not a plain object) so that a runtime `ecl` of e.g. 'constructor'
@@ -1007,10 +1008,20 @@ function escapeAttr(value: unknown): string {
 		.replace(/'/g, '&#39;');
 }
 
-// Returns the geometry of a QR Code depicting the given content, with the given number of
-// border modules: the side length of the (square) viewBox and the "d" attribute of a path
-// covering every dark module. Both are built from validated numbers only, so they are always
-// safe to interpolate into markup.
+/**
+ * Returns the geometry of a QR Code depicting `content`, with `border` quiet-zone modules:
+ * the side length of the (square) viewBox and the `d` attribute of a path covering every
+ * dark module. Both are built from validated numbers only, so they are always safe to
+ * interpolate into markup. This is what the `QrCode` component renders.
+ *
+ * Pure and DOM-free.
+ *
+ * @param content - Text to encode.
+ * @param ecl - Error correction level. An unknown value falls back to `'medium'`.
+ * @param border - Quiet zone width, in modules.
+ * @throws {RangeError} If `border` is not a finite non-negative number, or if `content`
+ *   does not fit into any QR Code version at the given `ecl`.
+ */
 export function toQrPath(
 	content: string,
 	ecl: QrEcl = 'medium',
@@ -1030,8 +1041,23 @@ export function toQrPath(
 	return { size: qr.size + b * 2, path: parts.join(' ') };
 }
 
-// Returns a string of SVG code for an image depicting the given QR Code, with the given number
-// of border modules. The string always uses Unix newlines (\n), regardless of the platform.
+/**
+ * Returns SVG markup depicting `content` as a QR Code — the same drawing the `QrCode`
+ * component renders, as a string.
+ *
+ * Pure and DOM-free, so it works on a server. The root `<svg>` declares its `xmlns`, so the
+ * string is both valid inline in HTML and a valid standalone `.svg` document (e.g. served as
+ * `image/svg+xml`). It carries a `viewBox` but no `width`/`height`: it scales to whatever box
+ * it is placed in, so add them if the consumer needs an intrinsic size. Colors are
+ * attribute-escaped. Always uses Unix newlines (`\n`), regardless of the platform.
+ *
+ * @param content - Text to encode.
+ * @param ecl - Error correction level. An unknown value falls back to `'medium'`.
+ * @param border - Quiet zone width, in modules.
+ * @param lightColor - Background fill.
+ * @param darkColor - Module fill.
+ * @throws {RangeError} See {@link toQrPath}.
+ */
 export function toQrSvg(
 	content: string,
 	ecl: QrEcl = 'medium',
@@ -1040,11 +1066,8 @@ export function toQrSvg(
 	darkColor: string = 'black'
 ): string {
 	const { size, path } = toQrPath(content, ecl, border);
-	// <?xml version="1.0" encoding="UTF-8"?>
-	// <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-	// xmlns="http://www.w3.org/2000/svg" version="1.1"
 	return `
-<svg viewBox="0 0 ${size} ${size}" stroke="none" style="display: block; margin: 0;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" stroke="none" style="display: block; margin: 0;">
 	<rect width="100%" height="100%" fill="${escapeAttr(lightColor)}"/>
 	<path d="${path}" fill="${escapeAttr(darkColor)}"/>
 </svg>

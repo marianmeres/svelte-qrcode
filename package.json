@@ -30,6 +30,10 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
+		},
+		"./qrcodegen": {
+			"types": "./dist/qrcodegen.d.ts",
+			"default": "./dist/qrcodegen.js"
 		}
 	},
 	"peerDependencies": {
